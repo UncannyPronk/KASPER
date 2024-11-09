@@ -28,18 +28,18 @@ def handle_devices(connection, address):
     while True:
         olddata = data
         data = connection.recv(1024).decode()
-        print(f" data : {data} by {device_name}")
+        # print(f" data : {data} by {device_name}")
         if data == None or data == "":
             data = olddata
-        print(f"newdata : {data}")
+        # print(f"newdata : {data}")
 
         # print(data)
         if data == "exit":
             print(device_name+" has left the server")
-            # try:
-                # del device_types["*"+str(device_name)]
-            # except KeyError:
-            #     pass
+            try:
+                del device_types[str(device_name)]
+            except KeyError:
+                pass
             del devices[device_name]
             # print(device_types)
             # connection.send(str(device_types).encode())

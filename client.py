@@ -16,11 +16,11 @@ device_type = device_info.device_type()
 # Establish connection to server
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # s.connect((socket.gethostbyname(socket.gethostname()), 5000))
-s.connect(("localhost", 8080))
+s.connect(("192.168.1.23", 8080))
 
 # Send client name to server
-s.send(socket.gethostname().encode())
-# s.send(input("Enter name: ").encode())
+# s.send(socket.gethostname().encode())
+s.send(input("Enter name: ").encode())
 print(s.recv(1024).decode())
 s.send(device_type.encode())
 print(s.recv(1024).decode())
