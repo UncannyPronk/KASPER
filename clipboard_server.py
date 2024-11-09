@@ -1,7 +1,7 @@
 import socket as s, threading as t, sys, time
 
 server = s.socket(s.AF_INET, s.SOCK_STREAM)
-server.bind(("", 5000))
+server.bind(("", 8080))
 
 server.listen()
 
@@ -23,9 +23,15 @@ def handle_devices(connection, address):
     connection.send("message received".encode())
     print(f"{device_types} {device_name} has joined the server.")
     emptyserver = False
+    data = "default_copied_message"
 
     while True:
+        olddata = data
         data = connection.recv(1024).decode()
+        print(f" data : {data} by {device_name}")
+        if data == None or data == "":
+            data = olddata
+        print(f"newdata : {data}")
 
         # print(data)
         if data == "exit":
@@ -52,32 +58,10 @@ def handle_devices(connection, address):
                     sys.exit()
             break
         else:
-            for i in data.split("*"):
-                if i == "_ignore_":
-                    data = olddata
-                    # print("old:"+olddata)
-                    connection.send("*_ignore_*".encode())
-                    # try:
-                    #     for device in devices:
-                    #         devices[device].send("*_*ignore_*_".encode())
-                    #         time.sleep(1)
-                    # except RuntimeError:
-                    #     for device in devices:
-                    #         devices[device].send("*_*ignore_*_".encode())
-                    #     continue
-                # elif data == "*_*ignore_*_*_*ignore_*_":
-                #     for device in devices:
-                #         devices[device].send("*_*ignore_*_".encode())
-                    break
-            else:
-                print(device_name +" : "+data)
-                for device in devices:
-                    if data != olddata:
-                        print(f"sending to {device}")
-                        devices[device].send(str(data).encode())
-                        time.sleep(1)
-                olddata = data
-                # connection.send("Ack".encode())
+            print(device_name +" : "+data)
+            for device in devices:
+                print(f"sending to {device}")
+                devices[device].send(str(data).encode())
 
 while True:
     global client_thread

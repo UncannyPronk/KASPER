@@ -16,11 +16,11 @@ device_type = device_info.device_type()
 # Establish connection to server
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # s.connect((socket.gethostbyname(socket.gethostname()), 5000))
-s.connect(("localhost", 5000))
+s.connect(("localhost", 8080))
 
 # Send client name to server
-# s.send(socket.gethostname().encode())
-s.send(input("Enter name: ").encode())
+s.send(socket.gethostname().encode())
+# s.send(input("Enter name: ").encode())
 print(s.recv(1024).decode())
 s.send(device_type.encode())
 print(s.recv(1024).decode())
@@ -29,22 +29,23 @@ prevpaste = ""
 
 def waitForNewPaste():
     global prevpaste
-    newpaste = str(pyperclip.paste())
-    if newpaste != "*_ignore_*":
+    while True:
+        newpaste = str(pyperclip.paste())
         if newpaste != prevpaste:
             print(prevpaste, newpaste)
             prevpaste = newpaste
-            return newpaste
-        else:
-            return "*_ignore_*"
-    else:
-        return "*_ignore_*"
+            break
+    return newpaste
 
 while True:
     # Send message to server
     message = waitForNewPaste()
     # print(f"1: {message}")
-    s.send(message.encode())
+    if message != None:
+        s.send(message.encode())
+    # else:
+    #     s.send("".encode())
+    #     print("nothing")
     # print("message sent")
 
     # Quit chat
@@ -54,10 +55,8 @@ while True:
 
     # Read incoming message
     message = s.recv(1024).decode()
-    for i in message.split("*"):
-        if i == "_ignore_":
-            break
-    else:
-        print(message)
+    print(message)
+    if message != None:
+        # print(message)
         pyperclip.copy(message)
         print("Message copied to clipboard")
